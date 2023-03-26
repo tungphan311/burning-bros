@@ -1,45 +1,19 @@
-import { useEffect, useState } from 'react'
-import { Product } from '../../types/product'
-import axios from '../../utils/axios'
+import { SearchIcon } from '@chakra-ui/icons'
+import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
 
-function SearchInput() {
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState<Product[]>([])
-  const [isSearching, setIsSearching] = useState(false)
+type SearchInputProps = {
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+}
 
-  useEffect(() => {
-    if (query !== '') {
-      const delayDebounceFn = setTimeout(() => {
-        search()
-      }, 1000)
-
-      return () => clearTimeout(delayDebounceFn)
-    }
-  }, [query])
-
-  const search = async () => {
-    setIsSearching(true)
-    try {
-      const response = await axios.get(`/products/search?q=${query}`)
-      setResults(response.data.products)
-    } catch (error) {
-      console.log(error)
-    }
-    setIsSearching(false)
-  }
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value)
-  }
-
+function SearchInput({ handleInputChange }: SearchInputProps) {
   return (
-    <div>
-      <input type='text' onChange={handleInputChange} />
-      {isSearching && <div>Loading...</div>}
-      {results.map((result) => (
-        <div key={result.id}>{result.brand}</div>
-      ))}
-    </div>
+    <InputGroup maxW={600}>
+      <InputLeftElement pointerEvents='none'>
+        <SearchIcon color='gray.300' />
+      </InputLeftElement>
+
+      <Input placeholder='Type to search' onChange={handleInputChange} />
+    </InputGroup>
   )
 }
 
