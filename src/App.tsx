@@ -1,4 +1,4 @@
-import { Center, Container, Wrap, WrapItem } from '@chakra-ui/react'
+import { Center, Container, useToast, Wrap, WrapItem } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import './App.css'
 import Loading from './components/Loading/Loading'
@@ -19,6 +19,7 @@ function App() {
     total: 0,
     limit: LIMIT,
   })
+  const toast = useToast()
 
   const { page, limit, total } = pagination
   const skip = (page - 1) * limit
@@ -67,8 +68,12 @@ function App() {
         setResults(response.data.products)
         setPagination({ page: 1, limit: LIMIT, total: response.data.total })
       }
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      toast({
+        title: error.message || 'Search products failed!',
+        status: 'error',
+        isClosable: true,
+      })
     }
     setIsSearching(false)
   }
